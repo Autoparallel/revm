@@ -7,16 +7,20 @@ use std::sync::Arc;
 
 /// Handle that validates env.
 pub type ValidateEnvHandle<'a, DB> =
-    Arc<dyn Fn(&Env) -> Result<(), EVMError<<DB as Database>::Error>> + 'a>;
+    Arc<dyn Fn(&Env) -> Result<(), EVMError<<DB as Database>::Error>> + Send + Sync + 'a>;
 
 /// Handle that validates transaction environment against the state.
 /// Second parametar is initial gas.
-pub type ValidateTxEnvAgainstState<'a, EXT, DB> =
-    Arc<dyn Fn(&mut Context<EXT, DB>) -> Result<(), EVMError<<DB as Database>::Error>> + 'a>;
+pub type ValidateTxEnvAgainstState<'a, EXT, DB> = Arc<
+    dyn Fn(&mut Context<EXT, DB>) -> Result<(), EVMError<<DB as Database>::Error>>
+        + Send
+        + Sync
+        + 'a,
+>;
 
 /// Initial gas calculation handle
 pub type ValidateInitialTxGasHandle<'a, DB> =
-    Arc<dyn Fn(&Env) -> Result<u64, EVMError<<DB as Database>::Error>> + 'a>;
+    Arc<dyn Fn(&Env) -> Result<u64, EVMError<<DB as Database>::Error>> + Send + Sync + 'a>;
 
 /// Handles related to validation.
 pub struct ValidationHandler<'a, EXT, DB: Database> {
